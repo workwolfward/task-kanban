@@ -9,6 +9,16 @@
 
 技术栈：**Vue 3 + Vite + Tailwind CSS v4 + localStorage**（无后端、无第三方 UI 库）。
 
+## 交付物导航
+
+| 交付项 | 位置 |
+| --- | --- |
+| GitHub 仓库 | <https://github.com/workwolfward/task-kanban> |
+| 每个功能的运行截图 | 本页 [功能截图](#功能截图每条需求对应一张实际运行截图) · [`docs/screenshots/`](./docs/screenshots) |
+| 提示词设计 | [`PROMPTS.md`](./PROMPTS.md) |
+| 实践报告（过程 / 验证 / 演示稿） | [`docs/课堂实践报告.md`](./docs/课堂实践报告.md) |
+| 任务单（计划 / 范围 / 验收） | [`TASK.md`](./TASK.md) |
+
 ![浅色看板](docs/screenshots/01-board-light.png)
 
 ![深色模式](docs/screenshots/04-board-dark.png)
@@ -47,6 +57,25 @@ npm test         # 单元测试（vitest，37 条）
 - **多标签页同步**：另一个标签页改了任务或主题，当前页通过 `storage` 事件自动跟随
 - **快捷键**：`N` 新建任务、`/` 聚焦搜索（在输入框内不抢键）
 - **写入失败有反馈**：localStorage 被禁用或配额满时提示，而不是静默丢数据
+
+## 功能截图（每条需求对应一张实际运行截图）
+
+截图不是画的原型图，全部由脚本驱动真实浏览器操作后捕获（headless Chrome + CDP），因此每张图里的数字、提示文案都是程序当时的真实输出。
+
+| 功能 | 截图 |
+| --- | --- |
+| **① 新建任务 + 标题必填校验**：空标题保存时输入框下方提示「标题不能为空」，不产生卡片 | <img src="docs/screenshots/02-dialog-validation.png" width="420" alt="新建任务弹窗与空标题校验提示" /> |
+| **② 三种状态 + 三档优先级**：待办 / 进行中 / 完成三列，卡片左侧色条与标签同时表示高红、中黄、低绿 | <img src="docs/screenshots/03-board-created.png" width="420" alt="三列看板与优先级配色" /> |
+| **③ 编辑任务**：点击卡片打开弹窗，字段回填原值，可改标题 / 描述 / 优先级 / 状态 | <img src="docs/screenshots/06-dialog-edit.png" width="420" alt="编辑任务弹窗回填原值" /> |
+| **④ 删除二次确认**：删除前弹确认框，避免误删 | <img src="docs/screenshots/07-confirm-delete.png" width="420" alt="删除二次确认弹窗" /> |
+| **⑤ 删除后撤销**：底部提示条给出「撤销」，点一下原位置恢复 | <img src="docs/screenshots/12-delete-undo-toast.png" width="420" alt="删除后的可撤销提示条" /> |
+| **⑥ 拖拽进行中**：源卡片半透明，目标列边框高亮，表示松手会落到这一列 | <img src="docs/screenshots/08-drag-in-progress.png" width="420" alt="拖拽过程中的视觉反馈" /> |
+| **⑦ 拖拽落点结果**：卡片进入「完成」列，计数与顶部完成度同步变化，并提示「已移到完成」 | <img src="docs/screenshots/09-drag-dropped.png" width="420" alt="拖拽后卡片改变状态" /> |
+| **⑧ 搜索**：按标题或描述过滤，显示「筛选结果 1 / 6 条」与重置入口 | <img src="docs/screenshots/10-search-filter.png" width="420" alt="搜索过滤结果" /> |
+| **⑨ 优先级筛选**：只看「高」优先级任务 | <img src="docs/screenshots/11-priority-filter.png" width="420" alt="按优先级筛选" /> |
+| **⑩ 刷新后数据保留**：F5 之后 6 条任务、状态、优先级、主题全部还在 | <img src="docs/screenshots/13-persistence-after-reload.png" width="420" alt="刷新后数据仍在" /> |
+| **⑪ 深色模式**：一键切换，写入 localStorage，刷新后保持 | <img src="docs/screenshots/04-board-dark.png" width="420" alt="深色模式看板" /> |
+| **⑫ 移动端 / 无鼠标场景**：窄屏塌成单列，卡片提供「移到下一列」按钮替代拖拽 | <img src="docs/screenshots/05-mobile.png" width="420" alt="移动端单列布局" /> |
 
 ## 开发过程（四轮迭代）
 
@@ -130,7 +159,8 @@ $ npm run build
 
 ## 文档
 
+- [`PROMPTS.md`](./PROMPTS.md)：**提示词设计**——五段式骨架、六条原则、逐轮真实提示词、纠偏模板、反模式对照
 - [`TASK.md`](./TASK.md)：任务单（目标 / 范围 / 约束 / 验收 / 停止条件）与四轮迭代记录
-- [`docs/课堂实践报告.md`](./docs/课堂实践报告.md)：实践报告（提示词设计、验证证据、演示脚本）
-- [`docs/screenshots/`](./docs/screenshots)：浅色 / 深色 / 弹窗 / 移动端截图
+- [`docs/课堂实践报告.md`](./docs/课堂实践报告.md)：实践报告（需求拆解、验证证据、踩坑记录、演示脚本）
+- [`docs/screenshots/`](./docs/screenshots)：13 张实际运行截图（浅色 / 深色 / 弹窗 / 拖拽 / 筛选 / 移动端）
 - [`LICENSE`](./LICENSE)：MIT
