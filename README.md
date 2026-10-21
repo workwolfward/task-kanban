@@ -5,19 +5,22 @@
 ![Vue 3](https://img.shields.io/badge/Vue-3-42b883)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38bdf8)
 
-课堂实践交付物：用 Agentic 开发方式完成的任务管理应用。
+课堂实践交付物：用 Agentic 开发方式（计划 → 执行 → 确认）完成的任务管理应用。
 
 技术栈：**Vue 3 + Vite + Tailwind CSS v4 + localStorage**（无后端、无第三方 UI 库）。
 
-## 交付物导航
+## 提交说明（作业要求对照）
 
-| 交付项 | 位置 |
+本仓库即为提交物，三项要求分别落在：
+
+| 作业要求 | 交付位置 |
 | --- | --- |
-| GitHub 仓库 | <https://github.com/workwolfward/task-kanban> |
-| 每个功能的运行截图 | 本页 [功能截图](#功能截图每条需求对应一张实际运行截图) · [`docs/screenshots/`](./docs/screenshots) |
-| 提示词设计 | [`PROMPTS.md`](./PROMPTS.md) |
-| 实践报告（过程 / 验证 / 演示稿） | [`docs/课堂实践报告.md`](./docs/课堂实践报告.md) |
-| 任务单（计划 / 范围 / 验收） | [`TASK.md`](./TASK.md) |
+| ① GitHub 仓库链接 | <https://github.com/workwolfward/task-kanban>（`main` 分支） |
+| ② 每个功能运行的截图 | 本页 [功能截图](#功能截图) 一节，12 个功能逐条配图；原图见 [`docs/screenshots/`](./docs/screenshots)（13 张，桌面 1440×900 / 移动端 780×1688，脚本实拍） |
+| ③ 提示词的设计 | [`PROMPTS.md`](./PROMPTS.md)：五段式骨架、六条原则、五轮真实提示词、纠偏模板、反模式对照 |
+| 附加：开发过程与验证 | [`docs/课堂实践报告.md`](./docs/课堂实践报告.md)、[`TASK.md`](./TASK.md)（任务单与四轮迭代） |
+
+一句话说明：这是一个纯前端任务看板，课件要求的六条功能（增删改查、三种状态、三档优先级、拖拽看板、深色模式、本地持久化）全部实现；开发过程按「计划 → 执行 → 浏览器确认 → 提交」走了四轮，**仓库历史一轮一个提交**，可逐轮 checkout 查看中间状态；验证有三层证据——37 条单元测试、生产构建、headless 浏览器自动化断言。
 
 ![浅色看板](docs/screenshots/01-board-light.png)
 
@@ -58,9 +61,9 @@ npm test         # 单元测试（vitest，37 条）
 - **快捷键**：`N` 新建任务、`/` 聚焦搜索（在输入框内不抢键）
 - **写入失败有反馈**：localStorage 被禁用或配额满时提示，而不是静默丢数据
 
-## 功能截图（每条需求对应一张实际运行截图）
+## 功能截图
 
-截图不是画的原型图，全部由脚本驱动真实浏览器操作后捕获（headless Chrome + CDP），因此每张图里的数字、提示文案都是程序当时的真实输出。
+每条功能需求配一张实际运行截图。截图不是原型图，全部由脚本驱动真实浏览器操作后捕获（headless Chrome + CDP），因此图里的数字、提示文案都是程序当时的真实输出。
 
 | 功能 | 截图 |
 | --- | --- |
