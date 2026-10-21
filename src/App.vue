@@ -1,6 +1,6 @@
 <script setup>
-// 第 2 轮：核心功能——任务清单的增删改查（数据只存在内存里）。
-import { computed, reactive, ref } from 'vue'
+// 第 3 轮：在核心功能之上接入 localStorage，刷新不丢数据。
+import { computed, reactive, ref, watch } from 'vue'
 import TaskDialog from './components/TaskDialog.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import {
@@ -11,8 +11,10 @@ import {
   groupByStatus,
   updateTask,
 } from './lib/tasks.js'
+import { loadTasks, saveTasks } from './lib/storage.js'
 
-const tasks = ref([])
+const tasks = ref(loadTasks())
+watch(tasks, (value) => saveTasks(value), { deep: true })
 
 const groups = computed(() => groupByStatus(tasks.value))
 const counts = computed(() => countByStatus(tasks.value))
@@ -88,7 +90,7 @@ function confirmDelete() {
           </span>
           <div class="leading-tight">
             <h1 class="text-[15px] font-semibold tracking-tight text-ink">TaskFlow 任务看板</h1>
-            <p class="hidden text-[11px] text-ink-soft sm:block">任务清单已可用，尚未接入持久化</p>
+            <p class="hidden text-[11px] text-ink-soft sm:block">数据保存在浏览器，刷新不丢失</p>
           </div>
         </div>
 
@@ -193,7 +195,7 @@ function confirmDelete() {
       </div>
 
       <p class="text-center text-[11px] text-ink-soft md:text-left">
-        第 2 轮：点击卡片可编辑，右上角可删除；刷新后数据会丢失（下一轮接入持久化）。
+        第 3 轮：任务写入 localStorage，刷新后仍在；看板拖拽与深色模式在下一轮。
       </p>
     </main>
 
