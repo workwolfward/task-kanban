@@ -110,6 +110,8 @@ function indexOfTask(tasks, id) {
  */
 export function moveTask(tasks, id, toStatus, beforeId = null) {
   if (!STATUS_IDS.includes(toStatus)) return tasks
+  // 拖到自己身上是空操作，否则会被当成「追加到列尾」
+  if (beforeId && beforeId === id) return tasks
   const from = indexOfTask(tasks, id)
   if (from === -1) return tasks
 

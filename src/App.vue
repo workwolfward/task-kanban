@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import TaskColumn from './components/TaskColumn.vue'
 import TaskDialog from './components/TaskDialog.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
@@ -15,12 +15,41 @@ import {
   statusLabel,
   updateTask,
 } from './lib/tasks.js'
-import { applyTheme, loadTasks, loadTheme, saveTasks, saveTheme, systemTheme } from './lib/storage.js'
+import { applyTheme, forcedTheme, loadTasks, loadTheme, saveTasks, saveTheme, systemTheme } from './lib/storage.js'
 
 /* ------------------------------ 任务数据 ------------------------------ */
 const tasks = ref(loadTasks())
 
-watch(tasks, (value) => saveTasks(value), { deep: true })
+// 用「上次写入的序列化结果」做去重：既避免多标签页同步时来回写盘，
+// 也能在写入失败（隐私模式 / 配额满）时给出提示而不是静默丢数据。
+let lastSaved = JSON.stringify(tasks.value)
+watch(
+  tasks,
+  (value) => {
+    const serialized = JSON.stringify(value)
+    if (serialized === lastSaved) return
+    if (saveTasks(value)) {
+      lastSaved = serialized
+    } else {
+      showToast('本地存储写入失败，改动可能不会被保存')
+    }
+  },
+  { deep: true },
+)
+
+/* 多标签页同步：另一个标签改了数据或主题，这边跟着更新 */
+function syncFromStorage(event) {
+  if (event.key === 'kanban.tasks.v1') {
+    const next = loadTasks()
+    lastSaved = JSON.stringify(next)
+    tasks.value = next
+    return
+  }
+  if (event.key === 'kanban.theme' && event.newValue) {
+    theme.value = event.newValue === 'dark' ? 'dark' : 'light'
+    applyTheme(theme.value)
+  }
+}
 
 const counts = computed(() => countByStatus(tasks.value))
 const total = computed(() => tasks.value.length)
@@ -31,6 +60,7 @@ const progress = computed(() =>
 /* ------------------------------ 搜索与筛选 ------------------------------ */
 const query = ref('')
 const priorityFilter = ref('all')
+const searchInput = ref(null)
 
 const visibleTasks = computed(() =>
   filterTasks(tasks.value, { query: query.value, priority: priorityFilter.value }),
@@ -63,12 +93,39 @@ function seedDemoTasks() {
 
 onMounted(() => {
   applyTheme(theme.value)
+  window.addEventListener('storage', syncFromStorage)
+  window.addEventListener('keydown', onGlobalKeydown)
 
   const demo = new URLSearchParams(window.location.search).get('demo')
   if (demo === '1' && tasks.value.length === 0) {
     tasks.value = seedDemoTasks()
   }
 })
+
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', syncFromStorage)
+  window.removeEventListener('keydown', onGlobalKeydown)
+  clearTimeout(toastTimer)
+})
+
+/* 快捷键：N 新建，/ 聚焦搜索；在输入框里不抢键 */
+function isTypingTarget(el) {
+  if (!el || !el.tagName) return false
+  return ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) || el.isContentEditable
+}
+
+function onGlobalKeydown(event) {
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return
+  if (isTypingTarget(event.target)) return
+
+  if (event.key === 'n' || event.key === 'N') {
+    event.preventDefault()
+    openCreate('todo')
+  } else if (event.key === '/') {
+    event.preventDefault()
+    searchInput.value?.focus()
+  }
+}
 
 /* ------------------------------ 主题 ------------------------------ */
 const theme = ref(forcedTheme() ?? loadTheme() ?? systemTheme())
@@ -78,6 +135,13 @@ function toggleTheme() {
   theme.value = theme.value === 'dark' ? 'light' : 'dark'
   saveTheme(theme.value)
   applyTheme(theme.value)
+
+  // ?theme= 只是调试用的临时覆盖，用户一旦手动切换就让位给持久化设置
+  if (forcedTheme()) {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('theme')
+    window.history.replaceState({}, '', url)
+  }
 }
 
 /* ------------------------------ 弹窗与提示 ------------------------------ */
@@ -262,6 +326,7 @@ function clearDone() {
             <path d="m20 20-3.5-3.5" stroke-linecap="round" />
           </svg>
           <input
+            ref="searchInput"
             v-model="query"
             class="field !pl-9"
             type="search"
@@ -343,6 +408,10 @@ function clearDone() {
 
       <p class="text-center text-[11px] text-ink-soft md:text-left">
         提示：按住卡片拖到其他列即改状态；列内拖动可调整顺序；点击卡片可编辑。
+        <span class="hidden sm:inline">
+          快捷键：<kbd class="rounded border border-line bg-surface px-1">N</kbd> 新建、
+          <kbd class="rounded border border-line bg-surface px-1">/</kbd> 搜索。
+        </span>
       </p>
     </main>
 

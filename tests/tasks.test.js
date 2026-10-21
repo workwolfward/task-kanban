@@ -97,6 +97,13 @@ describe('moveTask 改变状态与排序', () => {
     expect(moveTask(tasks, a.id, 'unknown')).toBe(tasks)
   })
 
+  it('拖到自己身上是空操作（不会被追加到列尾）', () => {
+    const a = makeTask('A')
+    const b = makeTask('B')
+    const tasks = [a, b]
+    expect(moveTask(tasks, a.id, 'todo', a.id)).toBe(tasks)
+  })
+
   it('目标 beforeId 不存在时追加到列尾', () => {
     const a = makeTask('A')
     const b = makeTask('B')
