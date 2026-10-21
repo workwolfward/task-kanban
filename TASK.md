@@ -42,14 +42,17 @@
 
 # 迭代记录
 
-| 轮次 | 目标 | 产出 | 确认方式 |
-| --- | --- | --- | --- |
-| 1 | 骨架：能跑起来的三列空看板 | `index.html`、`vite.config.js`、主题变量、`App.vue` 布局 | `npm run dev`，三列渲染、无报错 |
-| 2 | 核心功能：增删改查 | `lib/tasks.js`、`TaskDialog.vue`、`ConfirmDialog.vue` | 空标题提示、创建/编辑/删除可见生效 |
-| 3 | 持久化 | `lib/storage.js`、脏数据修复 | 刷新后任务仍在；非法 JSON 不白屏 |
-| 4 | 看板交互 + 深色模式 | `TaskColumn.vue`、`TaskCard.vue`、拖拽与主题切换 | 拖拽改状态、深色刷新保留 |
+| 轮次 | 目标 | 产出 | 确认方式 | 提交 |
+| --- | --- | --- | --- | --- |
+| 1 | 骨架：能跑起来的三列空看板 | `index.html`、`vite.config.js`、主题变量、`App.vue` 布局 | `npm run dev`，三列渲染、无报错 | `086396f` |
+| 2 | 核心功能：增删改查 | `lib/tasks.js`、`TaskDialog.vue`、`ConfirmDialog.vue` | 空标题提示、创建/编辑/删除可见生效 | `34cce98` |
+| 3 | 持久化 | `lib/storage.js`、脏数据修复 | 刷新后任务仍在；非法 JSON 不白屏 | `6085288` |
+| 4 | 看板交互 + 深色模式 | `TaskColumn.vue`、`TaskCard.vue`、拖拽与主题切换 | 拖拽改状态、深色刷新保留 | `463f735` |
+| 收尾 | 多标签同步、快捷键、CI、许可证 | `storage` 事件、快捷键、`tests/storage.test.js`、`ci.yml` | 37 条测试、构建、Actions 变绿 | `339871c` |
 
 每轮结束的动作固定为：**看 diff → 跑测试/截图 → 记录证据 → 再开始下一轮**。
+
+每个回合的提交都能独立构建（`npm run build`），第 2、4 回合的提交也能独立跑测试，可以逐个 checkout 查看当时的形态。
 
 ---
 
